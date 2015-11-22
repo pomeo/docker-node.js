@@ -36,7 +36,7 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 # Add user
 RUN useradd -ms /bin/bash $USER
 RUN adduser $USER sudo
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN echo "$USER ALL=NOPASSWD: /usr/bin/supervisorctl" >> /etc/sudoers
 
 RUN echo '$USER:$USER' | chpasswd
 USER $USER
@@ -47,11 +47,12 @@ RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh
 RUN cat /home/ubuntu/.nvm/nvm.sh >> /home/ubuntu/installnode.sh
 RUN echo "nvm install $NODE" >> /home/ubuntu/installnode.sh
 RUN sh installnode.sh
-RUN sudo sed -i "s@.*PATH.*@PATH=\/home\/ubuntu\/.nvm\/versions\/node\/v$NODE\/bin:$PATH@" /etc/init.d/supervisor
 
 RUN mkdir -p ~/www/logs
 
 USER root
+
+RUN sed -i "s@.*PATH.*@PATH=\/home\/ubuntu\/.nvm\/versions\/node\/v$NODE\/bin:$PATH@" /etc/init.d/supervisor
 
 # Setup Supervisord
 RUN echo "[program:ssh]" >> /etc/supervisor/conf.d/main.conf
