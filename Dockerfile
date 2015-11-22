@@ -38,9 +38,9 @@ RUN useradd -ms /bin/bash $USER
 RUN adduser $USER sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-RUN echo 'ubuntu:ubuntu' | chpasswd
+RUN echo '$USER:$USER' | chpasswd
 USER $USER
-WORKDIR /home/ubuntu
+WORKDIR /home/$USER
 
 # Setup NVM
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
@@ -54,8 +54,10 @@ RUN mkdir -p ~/www/logs
 USER root
 
 # Setup Supervisord
-RUN echo "[group:app]" >> /etc/supervisor/conf.d/app.conf
-RUN echo "programs=front" >> /etc/supervisor/conf.d/app.conf
+RUN echo "[program:ssh]" >> /etc/supervisor/conf.d/main.conf
+RUN echo "command=/usr/sbin/sshd -D" >> /etc/supervisor/conf.d/main.conf
+RUN echo "[group:app]" >> /etc/supervisor/conf.d/main.conf
+RUN echo "programs=front" >> /etc/supervisor/conf.d/main.conf
 RUN echo "[program:front]" >> /etc/supervisor/conf.d/app.conf
 RUN echo "command=node app.js" >> /etc/supervisor/conf.d/app.conf
 RUN echo "directory=/home/ubuntu/www/current/" >> /etc/supervisor/conf.d/app.conf
@@ -71,7 +73,10 @@ RUN echo "stderr_logfile_maxbytes=1MB" >> /etc/supervisor/conf.d/app.conf
 RUN echo "stderr_logfile_backups=10" >> /etc/supervisor/conf.d/app.conf
 RUN echo "stopsignal=TERM" >> /etc/supervisor/conf.d/app.conf
 RUN echo "environment=NODE_ENV='production'" >> /etc/supervisor/conf.d/app.conf
-RUN service supervisor restart
+
+RUN echo "/usr/bin/supervisord -n" >> /start.sh
+RUN chmod +x /start.sh
 
 EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+EXPOSE 30000
+CMD ["/bin/bash", "/start.sh"]
