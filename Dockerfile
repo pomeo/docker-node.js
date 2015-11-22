@@ -38,7 +38,7 @@ RUN useradd -ms /bin/bash $USER
 RUN adduser $USER sudo
 RUN echo "$USER ALL=NOPASSWD: /usr/bin/supervisorctl" >> /etc/sudoers
 
-RUN echo '$USER:$USER' | chpasswd
+RUN echo "$USER:$USER" | chpasswd
 USER $USER
 WORKDIR /home/$USER
 
