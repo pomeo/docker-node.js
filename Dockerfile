@@ -4,6 +4,7 @@ MAINTAINER Sergey Ovechkin <me@pomeo.me>
 ENV USER ubuntu
 ENV NODE '5.1.0'
 
+# Update packages
 RUN ln -snf /bin/bash /bin/sh
 RUN apt-get update
 RUN apt-get upgrade -y
@@ -25,12 +26,14 @@ RUN apt-get install -y \
     openssh-server \
     sudo
 
+# OpenSSH
 RUN mkdir /var/run/sshd
 RUN sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
 
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 
+# Add user
 RUN useradd -ms /bin/bash $USER
 RUN adduser $USER sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
@@ -39,6 +42,7 @@ RUN echo 'ubuntu:ubuntu' | chpasswd
 USER $USER
 WORKDIR /home/ubuntu
 
+# Setup NVM
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
 RUN cat /home/ubuntu/.nvm/nvm.sh >> /home/ubuntu/installnode.sh
 RUN echo "nvm install $NODE" >> /home/ubuntu/installnode.sh
@@ -49,6 +53,7 @@ RUN mkdir -p ~/www/logs
 
 USER root
 
+# Setup Supervisord
 RUN echo "[group:app]" >> /etc/supervisor/conf.d/app.conf
 RUN echo "programs=front" >> /etc/supervisor/conf.d/app.conf
 RUN echo "[program:front]" >> /etc/supervisor/conf.d/app.conf
