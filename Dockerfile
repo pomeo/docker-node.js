@@ -2,7 +2,7 @@
 FROM ubuntu:latest
 MAINTAINER Sergey Ovechkin <me@pomeo.me>
 ENV USER ubuntu
-ENV NODE '5.1.0'
+ENV NODE '8.9.0'
 
 # Update packages
 RUN ln -snf /bin/bash /bin/sh
@@ -22,7 +22,6 @@ RUN apt-get install -y \
     libgif-dev \
     libpango1.0-dev \
     g++ \
-    software-properties-common \
     openssh-server \
     sudo
 
@@ -43,7 +42,7 @@ USER $USER
 WORKDIR /home/$USER
 
 # Setup NVM
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
 RUN cat /home/ubuntu/.nvm/nvm.sh >> /home/ubuntu/installnode.sh
 RUN echo "nvm install $NODE" >> /home/ubuntu/installnode.sh
 RUN sh installnode.sh
@@ -52,15 +51,13 @@ RUN mkdir -p ~/www/logs
 
 USER root
 
-RUN sed -i "s@.*PATH.*@PATH=\/home\/ubuntu\/.nvm\/versions\/node\/v$NODE\/bin:$PATH@" /etc/init.d/supervisor
-
 # Setup Supervisord
 RUN echo "[program:ssh]" >> /etc/supervisor/conf.d/main.conf
 RUN echo "command=/usr/sbin/sshd -D" >> /etc/supervisor/conf.d/main.conf
 RUN echo "[group:app]" >> /etc/supervisor/conf.d/main.conf
-RUN echo "programs=front" >> /etc/supervisor/conf.d/main.conf
-RUN echo "[program:front]" >> /etc/supervisor/conf.d/app.conf
-RUN echo "command=node app.js" >> /etc/supervisor/conf.d/app.conf
+RUN echo "programs=node" >> /etc/supervisor/conf.d/main.conf
+RUN echo "[program:node]" >> /etc/supervisor/conf.d/app.conf
+RUN echo "command=/home/ubuntu/.nvm/versions/node/v$NODE/bin/node app.js" >> /etc/supervisor/conf.d/app.conf
 RUN echo "directory=/home/ubuntu/www/current/" >> /etc/supervisor/conf.d/app.conf
 RUN echo "user=nobody" >> /etc/supervisor/conf.d/app.conf
 RUN echo "autostart=true" >> /etc/supervisor/conf.d/app.conf
@@ -79,5 +76,5 @@ RUN echo "/usr/bin/supervisord -n" >> /start.sh
 RUN chmod +x /start.sh
 
 EXPOSE 22
-EXPOSE 30000
+EXPOSE 3000
 CMD ["/bin/bash", "/start.sh"]
