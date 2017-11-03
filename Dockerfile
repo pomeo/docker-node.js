@@ -43,7 +43,7 @@ WORKDIR /home/$USER
 
 # Setup NVM
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
-RUN cat /home/ubuntu/.nvm/nvm.sh >> /home/ubuntu/installnode.sh
+RUN echo ". /home/ubuntu/.nvm/nvm.sh"  >> /home/ubuntu/installnode.sh
 RUN echo "nvm install $NODE" >> /home/ubuntu/installnode.sh
 RUN sh installnode.sh
 
