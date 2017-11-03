@@ -48,6 +48,9 @@ RUN echo "nvm install $NODE" >> /home/ubuntu/installnode.sh
 RUN sh installnode.sh
 
 RUN mkdir -p ~/www/logs
+RUN mkdir -p ~/www/shared
+RUN mkdir -p ~/www/releases
+RUN touch ~/www/shared/babel.json
 
 USER root
 
