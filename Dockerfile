@@ -2,7 +2,7 @@
 FROM ubuntu:latest
 MAINTAINER Sergey Ovechkin <me@pomeo.me>
 ENV USER ubuntu
-ENV NODE '8.9.0'
+ENV NODE '8.9.3'
 
 # Update packages
 RUN ln -snf /bin/bash /bin/sh
