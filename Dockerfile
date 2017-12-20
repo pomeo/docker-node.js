@@ -51,6 +51,7 @@ RUN mkdir -p ~/www/logs
 RUN mkdir -p ~/www/shared
 RUN mkdir -p ~/www/releases
 RUN touch ~/www/shared/babel.json
+RUN chown nobody:nogroup ~/www/shared/babel.json
 
 USER root
 
@@ -73,7 +74,7 @@ RUN echo "stderr_logfile=/home/ubuntu/www/logs/error.log" >> /etc/supervisor/con
 RUN echo "stderr_logfile_maxbytes=1MB" >> /etc/supervisor/conf.d/app.conf
 RUN echo "stderr_logfile_backups=10" >> /etc/supervisor/conf.d/app.conf
 RUN echo "stopsignal=TERM" >> /etc/supervisor/conf.d/app.conf
-RUN echo "environment=NODE_ENV='production'" >> /etc/supervisor/conf.d/app.conf
+RUN echo "environment=NODE_ENV='production',BABEL_CACHE_PATH='/home/ubuntu/www/shared/babel.json'" >> /etc/supervisor/conf.d/app.conf
 
 RUN echo "/usr/bin/supervisord -n" >> /start.sh
 RUN chmod +x /start.sh
