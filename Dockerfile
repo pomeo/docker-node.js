@@ -50,9 +50,9 @@ RUN mkdir -p ~/www/logs
 RUN mkdir -p ~/www/shared
 RUN mkdir -p ~/www/releases
 RUN touch ~/www/shared/babel.json
-RUN chown nobody:nogroup ~/www/shared/babel.json
 
 USER root
+RUN chown nobody:nogroup ~/www/shared/babel.json
 
 # Setup Supervisord
 RUN echo "[program:ssh]" >> /etc/supervisor/conf.d/main.conf
