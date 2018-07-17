@@ -52,7 +52,7 @@ RUN mkdir -p ~/www/releases
 RUN touch ~/www/shared/babel.json
 
 USER root
-RUN chown nobody:nogroup $WORKDIR/www/shared/babel.json
+RUN chown nobody:nogroup /home/ubuntu/www/shared/babel.json
 
 # Setup Supervisord
 RUN echo "[program:ssh]" >> /etc/supervisor/conf.d/main.conf

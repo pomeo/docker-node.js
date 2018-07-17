@@ -1,1 +1,1 @@
-# docker-node.js
+# docker + node.js + supervisor + capistrano + ssh
