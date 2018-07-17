@@ -2,13 +2,12 @@
 FROM ubuntu:latest
 MAINTAINER Sergey Ovechkin <me@pomeo.me>
 ENV USER ubuntu
-ENV NODE '8.9.3'
 
 # Update packages
 RUN ln -snf /bin/bash /bin/sh
-RUN apt-get update
-RUN apt-get upgrade -y
-RUN apt-get install -y \
+RUN apt update
+RUN apt upgrade -y
+RUN apt install -y \
     supervisor \
     git-core \
     curl \
@@ -22,6 +21,7 @@ RUN apt-get install -y \
     libgif-dev \
     libpango1.0-dev \
     g++ \
+    nano \
     openssh-server \
     sudo
 
@@ -32,6 +32,10 @@ RUN sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 
+# Setup Node.js
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt install -y nodejs
+
 # Add user
 RUN useradd -ms /bin/bash $USER
 RUN adduser $USER sudo
@@ -41,12 +45,7 @@ RUN echo "$USER:$USER" | chpasswd
 USER $USER
 WORKDIR /home/$USER
 
-# Setup NVM
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
-RUN echo ". /home/ubuntu/.nvm/nvm.sh"  >> /home/ubuntu/installnode.sh
-RUN echo "nvm install $NODE" >> /home/ubuntu/installnode.sh
-RUN sh installnode.sh
-
+# Capistrano dirs
 RUN mkdir -p ~/www/logs
 RUN mkdir -p ~/www/shared
 RUN mkdir -p ~/www/releases
@@ -61,7 +60,7 @@ RUN echo "command=/usr/sbin/sshd -D" >> /etc/supervisor/conf.d/main.conf
 RUN echo "[group:app]" >> /etc/supervisor/conf.d/main.conf
 RUN echo "programs=node" >> /etc/supervisor/conf.d/main.conf
 RUN echo "[program:node]" >> /etc/supervisor/conf.d/app.conf
-RUN echo "command=/home/ubuntu/.nvm/versions/node/v$NODE/bin/node app.js" >> /etc/supervisor/conf.d/app.conf
+RUN echo "command=node bin/app" >> /etc/supervisor/conf.d/app.conf
 RUN echo "directory=/home/ubuntu/www/current/" >> /etc/supervisor/conf.d/app.conf
 RUN echo "user=nobody" >> /etc/supervisor/conf.d/app.conf
 RUN echo "autostart=true" >> /etc/supervisor/conf.d/app.conf
