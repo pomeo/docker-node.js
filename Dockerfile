@@ -55,3 +55,5 @@ RUN chown nobody:nogroup /home/ubuntu/www/shared/babel.json
 
 EXPOSE 22
 EXPOSE 3000
+
+CMD ["/usr/sbin/sshd", "-D"]
