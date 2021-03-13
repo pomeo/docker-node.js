@@ -32,7 +32,7 @@ RUN sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 
 # Setup Node.js
-RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_15.x | bash -
 RUN apt install -y nodejs
 RUN npm install pm2 -g
 
@@ -48,10 +48,8 @@ WORKDIR /home/$USER
 RUN mkdir -p ~/www/logs
 RUN mkdir -p ~/www/shared
 RUN mkdir -p ~/www/releases
-RUN touch ~/www/shared/babel.json
 
 USER root
-RUN chown nobody:nogroup /home/ubuntu/www/shared/babel.json
 
 EXPOSE 22
 EXPOSE 3000
