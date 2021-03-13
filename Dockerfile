@@ -5,6 +5,8 @@ ENV USER ubuntu
 
 # Update packages
 RUN ln -snf /bin/bash /bin/sh
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Moscow
 RUN apt update
 RUN apt upgrade -y
 RUN apt install -y \
