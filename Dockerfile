@@ -33,14 +33,15 @@ RUN sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 
+# Add user
+RUN useradd -ms /bin/bash $USER
+RUN adduser $USER sudo
+
 # Setup Node.js
 RUN curl -sL https://deb.nodesource.com/setup_15.x | bash -
 RUN apt install -y nodejs
 RUN npm install pm2 -g
-
-# Add user
-RUN useradd -ms /bin/bash $USER
-RUN adduser $USER sudo
+RUN env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u $USER --hp /home/$USER
 
 RUN echo "$USER:$USER" | chpasswd
 USER $USER
