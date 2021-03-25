@@ -23,8 +23,14 @@ RUN apt install -y \
     libpango1.0-dev \
     g++ \
     nano \
+    gcc \
+    make \
+    ruby \
     openssh-server \
     sudo
+
+# Capistrano
+RUN gem install capistrano -v 2.15.9
 
 # OpenSSH
 RUN mkdir /var/run/sshd
