@@ -52,6 +52,7 @@ RUN adduser $USER sudo
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt install -y nodejs
 RUN npm install pm2 -g
+RUN /usr/bin/pm2 startup systemd -u $USER --hp /home/$USER
 
 RUN echo "$USER:$USER" | chpasswd
 USER $USER
