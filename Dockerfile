@@ -27,6 +27,7 @@ RUN apt install -y \
     make \
     ruby \
     openssh-server \
+    openssh-client \
     supervisor \
     sudo
 
