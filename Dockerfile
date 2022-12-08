@@ -50,7 +50,7 @@ RUN useradd -ms /bin/bash $USER
 RUN adduser $USER sudo
 
 # Setup Node.js
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_19.x | bash -
 RUN apt install -y nodejs
 RUN npm install pm2 -g
 RUN env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u $USER --hp /home/$USER
